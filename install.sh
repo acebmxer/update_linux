@@ -19,7 +19,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Make install.sh executable (if it isn't already)
-chmod +x install.sh
+chmod +x install.sh  # <--- ADD THIS LINE
 
 echo "Running install.sh..."
 ./install.sh || error_handler "Failed to run install.sh."
