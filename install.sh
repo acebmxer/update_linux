@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Set a function for error handling
 error_handler() {
   echo "Error: $1" >&2  # Send error to stderr
@@ -11,7 +10,17 @@ echo "Cloning dotfiles..."
 git clone https://github.com/flipsidecreations/dotfiles.git || error_handler "Failed to clone dotfiles repository."
 cd dotfiles || error_handler "Failed to change directory to dotfiles."
 
-# Run the installation script
+# Check for install.sh in the cloned dotfiles repository
+echo "Checking for install.sh..."
+ls -l install.sh
+if [ $? -ne 0 ]; then
+    echo "install.sh not found.  Check the URL or the repository content."
+    exit 1
+fi
+
+# Make install.sh executable (if it isn't already)
+chmod +x install.sh
+
 echo "Running install.sh..."
 ./install.sh || error_handler "Failed to run install.sh."
 
@@ -28,7 +37,13 @@ cd dotfiles || error_handler "Failed to change directory to dotfiles (as root)."
 # Mount the CD-ROM and run the installer, then unmount
 echo "Mounting CD-ROM and running installer..."
 mount /dev/cdrom /mnt || error_handler "Failed to mount CD-ROM."
+# Check contents of CD-ROM
+echo "Listing contents of CD-ROM..."
+ls -l /mnt
+# Find the actual path to the installer on the CD-ROM
+#  Adjust the path below accordingly
 bash -c "bash /mnt/Linux/install.sh" || error_handler "Failed to run installer from CD-ROM."
+#bash -c "bash /mnt/install.sh" || error_handler "Failed to run installer from CD-ROM."
 umount /mnt || error_handler "Failed to unmount CD-ROM."
 
 # Update and upgrade the system
